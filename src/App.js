@@ -1,14 +1,30 @@
 import logo from './logo.svg';
 import './App.css';
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react';
 
 function App() {
-  const [currentTime, setCurrentTime] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0);
+
   useEffect(() => {
-    fetch('/api/time').then(response => response.json().then(data => {
-      setCurrentTime(data.time)
-    }))
-  })
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://flask-api-six-xi.vercel.app/api/time');
+        const data = await response.json();
+        setCurrentTime(data.time);
+      } catch (error) {
+        console.error("Something happened");
+      }
+    };
+
+    fetchData();
+
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
